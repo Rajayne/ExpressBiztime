@@ -65,4 +65,18 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.put("/:id", async (req, res, next) => {
+  try {
+    const { amt } = req.body;
+    const { id } = req.params;
+    const invoice = await db.query(
+      `UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *`,
+      [amt, id]
+    );
+    return res.status(200).json({ invoice: invoice.rows[0] });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
