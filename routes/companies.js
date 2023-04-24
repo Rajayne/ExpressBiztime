@@ -42,4 +42,21 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.put("/:code", async (req, res, next) => {
+  try {
+    const { name, description } = req.body;
+    const { code } = req.params;
+    const companyByCode = await db.query(
+      `UPDATE companies SET name=$1, description=$2 WHERE code=$3 RETURNING *`,
+      [name, description, code]
+    );
+    if (companyByCode.rows.length === 0) {
+      throw new ExpressError(`No company found with code of ${code}`, 404);
+    }
+    return res.json({ company: companyByCode.rows[0] });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
