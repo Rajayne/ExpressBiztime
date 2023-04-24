@@ -13,4 +13,17 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const invoice = await db.query(`SELECT * FROM invoices WHERE id=$1`, [id]);
+    if (invoice.rows.length === 0) {
+      throw new ExpressError(`No invoice found with id of ${id}`, 404);
+    }
+    return res.json({ invoice: invoice.rows });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
