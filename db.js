@@ -1,5 +1,5 @@
 const { Client } = require("pg");
-const { user, password } = require(".../dbPassword");
+const { user, password } = require("../dbPassword");
 
 let DB_URI =
   process.env.NODE_ENV === "test"
