@@ -27,14 +27,34 @@ router.get("/:code", async (req, res, next) => {
       `SELECT id FROM invoices WHERE comp_code=$1`,
       [code]
     );
+    const industryResult = await db.query(
+      `SELECT industry_code FROM company_industries WHERE company_code=$1`,
+      [code]
+    );
     const company = companyByCode.rows[0];
     const invoices = invoicesResult.rows;
+    const industries = industryResult.rows;
     company.invoices = invoices.map((inv) => inv.id);
+    company.industries = industries.map((ind) => ind.industry_code);
     return res.json({ company: company });
   } catch (e) {
     return next(e);
   }
 });
+
+/* 
+SQL query to join all tables
+---
+SELECT c.code, c.name, c.description, i.id AS invoice_id, d.industry AS industry 
+FROM companies c
+JOIN company_industries ci
+	ON c.code = ci.company_code
+JOIN industries d
+	ON d.code = ci.industry_code
+JOIN invoices i 
+	ON c.code = i.comp_code 
+WHERE c.code='apple';
+*/
 
 router.post("/", async (req, res, next) => {
   try {
