@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require("../db");
 // const slugify = require("slugify");
 const ExpressError = require("../expressError");
-const { request } = require("../app");
 
 router.get("/", async (req, res, next) => {
   try {

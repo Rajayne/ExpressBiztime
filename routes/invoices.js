@@ -66,13 +66,30 @@ router.post("/", async (req, res, next) => {
 
 router.put("/:id", async (req, res, next) => {
   try {
-    const { amt } = req.body;
+    const { amt, paid } = req.body;
     const { id } = req.params;
-    const invoice = await db.query(
-      `UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *`,
-      [amt, id]
-    );
-    return res.status(200).json({ invoice: invoice.rows[0] });
+    const invoice = await db.query(`SELECT * FROM invoices WHERE id=$1`, [id]);
+    let result;
+    if (!invoice) {
+      throw new ExpressError(`No invoice found with id of ${id}`, 404);
+    }
+    if (paid === true && invoice.paid === false) {
+      result = await db.query(
+        `UPDATE invoices SET amt=$1, paid=$2, paid_date=CURRENT_DATE WHERE id=$3 RETURNING *`,
+        [amt, paid, id]
+      );
+    } else if (paid === false && invoice.paid === true) {
+      result = await db.query(
+        `UPDATE invoices SET amt=$1, paid=$2, paid_date=null WHERE id=$3 RETURNING *`,
+        [amt, paid, id]
+      );
+    } else {
+      result = await db.query(
+        `UPDATE invoices SET amt=$1, paid=$2 WHERE id=$3 RETURNING *`,
+        [amt, paid, id]
+      );
+    }
+    return res.status(200).json({ invoice: result.rows[0] });
   } catch (e) {
     return next(e);
   }
