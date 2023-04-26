@@ -1,9 +1,8 @@
-const express = require("express");
-const router = express.Router();
+const request = require("supertest");
+const app = require("../app");
 
 process.env.NODE_ENV = "test";
 const db = require("../db");
-const ExpressError = require("../expressError");
 
 let testCompany = {
   code: "google",
@@ -33,5 +32,16 @@ describe("Test beforeEach", () => {
   test("Create testCompany", () => {
     console.log(testCompany);
     expect(1).toBe(1);
+  });
+});
+
+describe("GET /companies", () => {
+  test("Get list of all companies", async () => {
+    const result = await request(app).get("/companies");
+    expect(result.statusCode).toBe(200);
+    console.log(result.rows);
+    expect(result.body).toEqual({
+      companies: [{ code: testCompany.code, name: testCompany.name }],
+    });
   });
 });
