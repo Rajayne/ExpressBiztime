@@ -44,7 +44,7 @@ Update GET /companies/[code] to include invoices
 4. Change the logic of PUT /invoices/[id] to update an invoice.
 
    - If invoice cannot be found, returns a 404.
-     Needs to be passed in a JSON body of {amt, paid}
+   - Needs to be passed in a JSON body of {amt, paid}
    - If paying unpaid invoice: sets paid_date to today
    - If un-paying: sets paid_date to null
    - Else: keep current paid_date
