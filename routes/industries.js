@@ -25,4 +25,19 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.post("/:code", async (req, res, next) => {
+  try {
+    const { company_code } = req.body;
+    const industry_code = req.params.code;
+    console.log(`Company: ${company_code}, Industry: ${industry_code}`);
+    const companyIndustry = await db.query(
+      `INSERT INTO company_industries (company_code, industry_code) VALUES ($1, $2) RETURNING *`,
+      [company_code, industry_code]
+    );
+    return res.json({ company_industry: companyIndustry.rows[0] });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;
