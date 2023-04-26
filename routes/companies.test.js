@@ -69,3 +69,24 @@ describe("POST /companies", () => {
     });
   });
 });
+
+describe("PUT /companies/:code", () => {
+  test("Edit a company", async () => {
+    const result = await request(app)
+      .put(`/companies/${testCompany.code}`)
+      .send({
+        name: "FAST Enterprises",
+        description: "Develops and installs software for government agencies.",
+      });
+    expect(result.statusCode).toBe(200);
+    // Set testCompany invoices to empty array
+    testCompany.invoices = [];
+    expect(result.body).toEqual({
+      company: {
+        code: "google",
+        name: "FAST Enterprises",
+        description: "Develops and installs software for government agencies.",
+      },
+    });
+  });
+});
