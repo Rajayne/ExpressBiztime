@@ -49,3 +49,23 @@ describe("GET /companies/:code", () => {
     });
   });
 });
+
+describe("POST /companies", () => {
+  test("Create a new company", async () => {
+    const result = await request(app).post(`/companies`).send({
+      code: "fast",
+      name: "FAST Enterprises",
+      description: "Develops and installs software for government agencies.",
+    });
+    expect(result.statusCode).toBe(201);
+    // Set testCompany invoices to empty array
+    testCompany.invoices = [];
+    expect(result.body).toEqual({
+      company: {
+        code: "fast",
+        name: "FAST Enterprises",
+        description: "Develops and installs software for government agencies.",
+      },
+    });
+  });
+});
