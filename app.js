@@ -10,6 +10,9 @@ app.use("/companies", cRoutes);
 const iRoutes = require("./routes/invoices");
 app.use("/invoices", iRoutes);
 
+const dRoutes = require("./routes/industries");
+app.use("/industries", dRoutes);
+
 /** 404 handler */
 app.use(function (req, res, next) {
   const err = new ExpressError("Not Found", 404);
