@@ -25,6 +25,27 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/:code", async (req, res, next) => {
+  try {
+    const code = req.params.code;
+    const industryByCode = await db.query(
+      `SELECT * FROM industries WHERE code=$1`,
+      [code]
+    );
+    const companiesRes = await db.query(
+      `SELECT company_code FROM company_industries WHERE industry_code=$1`,
+      [code]
+    );
+    const industry = industryByCode.rows[0];
+    const companies = companiesRes.rows;
+    console.log(companiesRes.rows);
+    industry.companies = companies.map((c) => c.company_code);
+    return res.json({ industry: industry });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 router.post("/:code", async (req, res, next) => {
   try {
     const { company_code } = req.body;
